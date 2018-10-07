@@ -5,7 +5,8 @@ date: "10/5/2018"
 output: github_document
 ---
 ## Problem 1
-```{r}
+
+```{r echo=FALSE,results='hide'}
 library(tidyverse)
 library(p8105.datasets)
 # Import the BFRSS data, exclude variables and format the data by using appropriate names.
@@ -13,7 +14,16 @@ brfss_df <-
     brfss_smart2010 %>% 
     janitor::clean_names() %>% 
     filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") 
-View(brfss_df)
+
+# Set the graph properties(theme, color and size) for ggplot
+library(ggplot2)
+library(readxl)
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 * 1.In 2002,  CT, MT, NH, NM, OR, TN, UT were observed at 7 locations.
 ```{r}
@@ -27,8 +37,12 @@ View(brfss_df)
 ```{r}
 
 
-```
 
+
+
+
+```
+* 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 
 
 # structure data: Response indicating the proportion of subjects with each response
