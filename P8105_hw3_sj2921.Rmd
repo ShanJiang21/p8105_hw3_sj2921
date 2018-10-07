@@ -5,16 +5,7 @@ date: "10/5/2018"
 output: github_document
 ---
 ## Problem 1
-
-```{r echo=FALSE,results='hide'}
-library(tidyverse)
-library(p8105.datasets)
-# Import the BFRSS data, exclude variables and format the data by using appropriate names.
-brfss_df <- 
-    brfss_smart2010 %>% 
-    janitor::clean_names() %>% 
-    filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") 
-
+```{r}
 # Set the graph properties(theme, color and size) for ggplot
 library(ggplot2)
 library(readxl)
@@ -25,6 +16,25 @@ knitr::opts_chunk$set(
 )
 theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
+* Import the data
+```{r echo=FALSE,results='hide'}
+library(tidyverse)
+library(p8105.datasets)
+# Import the BFRSS data, exclude variables and format the data by using appropriate names.
+brfss_df <- 
+    brfss_smart2010 %>% 
+    janitor::clean_names() %>% 
+    filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") 
+
+```
+* structure data: Response indicating the proportion of subjects with each response
+```{r}
+# Convert response to build a factor
+response <- factor(brfss_df$response)
+# Specify the levels of response_vector
+levels <- (c("Excellent", "Very Good", "Good", "Fair", "Poor"))
+```
+##### Questions
 * 1.In 2002,  CT, MT, NH, NM, OR, TN, UT were observed at 7 locations.
 ```{r}
  brfss_df %>% 
@@ -35,9 +45,20 @@ theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 * 2.Make a spaghetti plot showing the number of observations in each state from 2002 to 2010
 ```{r}
-ggplot(brfss_df, )
+location <- brfss_df %>% 
+  group_by(locationabbr, year) %>% 
+  summarise(n = n()) 
 
-
+ggplot(location, aes(x = year, y = n)) +
+  geom_line(alpha = .3, aes(group = locationabbr)) +
+  geom_point(alpha = .3) +
+  labs(
+    title = "Number of observations in each state(n) from 2002 to 2010",
+    x = "Year",
+    y = "Number of observations in each state(n)",
+    caption = "Data from the BRFSS package"
+  ) + scale_color_hue(name = "locationabbr", 
+                  h = c(200, 300))
 ```
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 ```{r}
@@ -49,21 +70,20 @@ ggplot(brfss_df, )
             sd_ex = sd(data_value)) 
 ```
 
-* 4. For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
+* 4.1 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). 
 ```{r}
-
+brfss_df %>% 
+  
+  
+  
 ```
+* 4.2 Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
 
 
-# structure data: Response indicating the proportion of subjects with each response
-```{r}
-# Convert response to build a factor
-fac_response <- factor(response)
-# Specify the levels of response_vector
-levels <- (c("Excellent", "Very Good", "Good", "Fair", "Poor"))
-fac_response 
-```
-1. In 2002,  states were observed at 7 locations
+
+# problem 2
+write a short description of the dataset,
+1. How many aisles are there, and which aisles are the most items ordered from?
 ```{r}
 
 ```
