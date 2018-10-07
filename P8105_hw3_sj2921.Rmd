@@ -35,14 +35,24 @@ theme_set(theme_bw() + theme(legend.position = "bottom"))
 ```
 * 2.Make a spaghetti plot showing the number of observations in each state from 2002 to 2010
 ```{r}
-
-
-
-
+ggplot(brfss_df, )
 
 
 ```
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
+```{r}
+ brfss_df %>% 
+  filter(locationabbr == "NY" & response == "Excellent") %>%
+  filter(year == "2002" | year == "2006" | year == "2010") %>% 
+  group_by(year) %>% 
+  summarise(mean_ex = mean(data_value),
+            sd_ex = sd(data_value)) 
+```
+
+* 4. For each year and state, compute the average proportion in each response category (taking the average across locations in a state). Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
+```{r}
+
+```
 
 
 # structure data: Response indicating the proportion of subjects with each response
