@@ -2,29 +2,47 @@
 title: "p8105_hw3_sj2921"
 author: "Shan Jiang"
 date: "10/5/2018"
-output: html_document
+output: github_document
 ---
+## Problem 1
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+# Import the BFRSS data, exclude variables and format the data by using appropriate names.
+brfss_df <- 
+    brfss_smart2010 %>% 
+    janitor::clean_names() %>% 
+    filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") 
+View(brfss_df)
+```
+* 1.In 2002,  CT, MT, NH, NM, OR, TN, UT were observed at 7 locations.
+```{r}
+ brfss_df %>% 
+  group_by(locationabbr) %>% 
+  distinct(locationdesc) %>% 
+  summarise(n = n()) %>% 
+  filter(n == 7)
+```
+* 2.Make a spaghetti plot showing the number of observations in each state from 2002 to 2010
+```{r}
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
 ```
 
-## R Markdown
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# structure data: Response indicating the proportion of subjects with each response
+```{r}
+# Convert response to build a factor
+fac_response <- factor(response)
+# Specify the levels of response_vector
+levels <- (c("Excellent", "Very Good", "Good", "Fair", "Poor"))
+fac_response 
 ```
+1. In 2002,  states were observed at 7 locations
+```{r}
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
 ```
+2. Graph spaghetti plot that shows the number of observations in each state from 2002 to 2010
+ 
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
