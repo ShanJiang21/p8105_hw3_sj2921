@@ -176,11 +176,34 @@ ny_noaa <-
 # Convert the month into the month name
 ny_noaa$month <- as.character(month.name[ny_noaa$month])
   
-  
 ```
 5. For snowfall, what are the most commonly observed values? Why?
 ```{r}
+ny_noaa %>% 
+  group_by(snow) %>%
+  summarize(n = n()) %>% 
+  filter(min_rank(desc(n)) < 2)
+```
+The most commonly observed value is 0 as the snowfall is observed by days.Usually it just snow at specific low temp or winter season, so the most commonly value appeared here is 0.
+
+6. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+```{r}
+# Convert the temp from character to interger vector.
+ny_noaa$tmin <- as.numeric(ny_noaa$tmin)
+  ny_noaa$tmax <- as.numeric(ny_noaa$tmax)
+  
+# Average temperature in January and in July in each station across years.
+max_mean <- ny_noaa %>%
+  filter(month == "January" | month == "July" ) %>% 
+  group_by(id, year, month) %>% 
+  summarise(
+    mean_tem = mean(tmax + tmin , na.rm = T)
+  )
+# detect the na value in the dataset
+sum(is.na(max_mean))
+
+# Graphing the new 
+
 
 ```
 
-6. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
