@@ -64,12 +64,13 @@ ggplot(location, aes(x = year, y = n)) +
 ```
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 ```{r}
- brfss_df %>% 
+brfss_df %>% 
   filter(locationabbr == "NY" & response == "Excellent") %>%
   filter(year == "2002" | year == "2006" | year == "2010") %>% 
   group_by(year) %>% 
   summarise(mean_ex = mean(data_value),
-            sd_ex = sd(data_value)) 
+            sd_ex = sd(data_value)) %>% 
+knitr::kable(digits = 1)
 ```
 * 4.1 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). 
 ```{r}
@@ -193,7 +194,7 @@ ny_noaa$tmin <- as.numeric(ny_noaa$tmin)
   ny_noaa$tmax <- as.numeric(ny_noaa$tmax)
   
 # Average temperature in January and in July in each station across years.
-max_mean <- ny_noaa %>%
+temp_mean <- ny_noaa %>%
   filter(month == "January" | month == "July" ) %>% 
   group_by(id, year, month) %>% 
   summarise(
@@ -202,7 +203,17 @@ max_mean <- ny_noaa %>%
 # detect the na value in the dataset
 sum(is.na(max_mean))
 
-# Graphing the new 
+# Graphing the temp 
+ggplot(temp_mean, aes(x = year , y =  mean_tem, color = id)) +
+  geom_point() 
+
+```
+* The outliers:
+
+* 
+7. Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+```{r}
+
 
 
 ```
