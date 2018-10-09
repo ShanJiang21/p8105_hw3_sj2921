@@ -144,22 +144,43 @@ Questions
 1.load the data
 ```{r}
 # Import the ny_noaa data, exclude variables and format the data by using appropriate names.
-ny_noaa <- 
     ny_noaa %>% 
     janitor::clean_names() 
-View(ny_noaa)
+
 ```
 2.a short description of the dataset
 The ny_noaa data set contains 7 variables and 2595176 observation value.
 
 - some key variables include: 
 * prcp: The daily precipitation volume in the unique location(id as key). 
-* snow: The daily snow volume in the unique location(id as key)
+* snow: The daily snowfall volume in the unique location(id as key)
 * snwd: South to North Water diversion in the specific date.
+```{r results='hide'}
+sum(is.na(ny_noaa$prcp))
+sum(is.na(ny_noaa$snow))
+sum(is.na(ny_noaa$snwd))
+```
+3. missing data percentage is an issue for snow and snwd as the percentage of missing values accounts for more than 22% for snwd and over 14% for snow.
+* prcp:  `r sum(is.na(ny_noaa$prcp))/2595176`  
+* snow:  `r sum(is.na(ny_noaa$snow))/2595176`  
+* snwd:  `r sum(is.na(ny_noaa$snwd))/2595176`
 
-_ missing data is an issue: 
-
+4. Create separate variables for year, month, and day.
+```{r}
+# Mutate separate variables for year, month, and day.
+ny_noaa <-
+  ny_noaa %>% 
+   mutate(year = as.numeric(format(date, format = "%Y")),
+                 month = as.numeric(format(date, format = "%m")),
+                 day = as.numeric(format(date, format = "%d"))) 
+# Convert the month into the month name
+ny_noaa$month <- as.character(month.name[ny_noaa$month])
+  
+  
+```
+5. For snowfall, what are the most commonly observed values? Why?
 ```{r}
 
 ```
 
+6. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
