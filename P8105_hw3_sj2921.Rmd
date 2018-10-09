@@ -88,21 +88,25 @@ ggplot(panel, aes(x = year, y = avg_pro )) +
 
 # problem 2
 
-* The dataset cleaning and summarizing 
+##### The dataset cleaning and summarizing 
+
+**Instacart Dataset description**
+
+1. There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the order_id and user_id as main keys. 
 ```{r}
+# 21 departments: summary
 instacart %>% 
   janitor::clean_names() %>% 
   group_by(department) %>% 
   summarize(n = n()) %>% 
   mutate(dep_ranking = min_rank(desc(n))) %>% 
   filter(dep_ranking > 20 | dep_ranking < 4)
-
 ```
-**Instacart Dataset description**
-1. There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the order_id and user_id as main keys. 
+
 2. We know that there are in total 21 departments. According to the ranking for no.of orders in each department, the 3 top-ranked department are **produce, dairy eggs and snacks**. The produce department has received 409087 orders which are the double of the second-ranked dairy eggs. The least popular department is **bulk**, which only has 1359 orders.
+
 ```{r}
-# The most 
+# The top-3 buyers for placing the most orders
 instacart %>% 
   janitor::clean_names() %>% 
   group_by(user_id) %>% 
@@ -112,6 +116,7 @@ instacart %>%
 ```
 3. The one who has the highest purchasing power among users are the two **user_id:149753, user_id:197541**.Both of them have 80 orders and they have maintained a high reorder rate. 
 ```{r}
+# The most popular products
 instacart %>% 
   janitor::clean_names() %>% 
   group_by(product_name) %>% 
@@ -128,16 +133,33 @@ Questions
 ```{r}
 
 ```
-2. Graph spaghetti plot that shows the number of observations in each state from 2002 to 2010
+2.
 
 
 3.
 
 
-4. Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
-
 # problem 3
-1.
+* NY NOAA data
+1.load the data
+```{r}
+# Import the ny_noaa data, exclude variables and format the data by using appropriate names.
+ny_noaa <- 
+    ny_noaa %>% 
+    janitor::clean_names() 
+View(ny_noaa)
+```
+2.a short description of the dataset
+The ny_noaa data set contains 7 variables and 2595176 observation value.
+
+- some key variables include: 
+* prcp: The daily precipitation volume in the unique location(id as key). 
+* snow: The daily snow volume in the unique location(id as key)
+* snwd: South to North Water diversion in the specific date.
+
+_ missing data is an issue: 
+
 ```{r}
 
 ```
+
