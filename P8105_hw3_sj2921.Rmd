@@ -24,7 +24,13 @@ library(p8105.datasets)
 brfss_df <- 
     brfss_smart2010 %>% 
     janitor::clean_names() %>% 
-    filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") 
+# Focus on overall health topic
+    filter(topic == "Overall Health") %>%
+    separate(locationdesc, into = c('state', 'location'), sep = ' - ') %>%
+    filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>% 
+    select(-locationabbr, -class, -topic,  -question, -c(confidence_limit_low:geo_location))
+
+brfss_df
 
 ```
 * structure data: Response indicating the proportion of subjects with each response
@@ -34,25 +40,24 @@ response <-
   factor(brfss_df$response, 
   levels <- (c("Excellent","Very Good", "Good", "Fair", "Poor")))
 
-
 ```
 ##### Questions
 * 1.In 2002,  CT, MT, NH, NM, OR, TN, UT were observed at 7 locations.
 ```{r}
  brfss_df %>% 
-  group_by(locationabbr) %>% 
-  distinct(locationdesc) %>% 
+  group_by(state) %>% 
+  distinct(location) %>% 
   summarise(n = n()) %>% 
   filter(n == 7)
 ```
 * 2.Make a spaghetti plot showing the number of observations in each state from 2002 to 2010
 ```{r}
 location <- brfss_df %>% 
-  group_by(locationabbr, year) %>% 
+  group_by(state, year) %>% 
   summarise(n = n()) 
 
 ggplot(location, aes(x = year, y = n)) +
-  geom_line(alpha = .3, aes(group = locationabbr)) +
+  geom_line(alpha = .3, aes(group = state)) +
   geom_point(alpha = .3) +
   labs(
     title = "Number of observations in each state(n) from 2002 to 2010",
@@ -65,7 +70,7 @@ ggplot(location, aes(x = year, y = n)) +
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 ```{r}
 brfss_df %>% 
-  filter(locationabbr == "NY" & response == "Excellent") %>%
+  filter(state == "NY" & response == "Excellent") %>%
   filter(year == "2002" | year == "2006" | year == "2010") %>% 
   group_by(year) %>% 
   summarise(mean_ex = mean(data_value),
@@ -75,17 +80,34 @@ knitr::kable(digits = 1)
 * 4.1 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). 
 ```{r}
 panel <- brfss_df %>%
-  group_by(locationabbr, year) %>% 
+  group_by(state, year, response) %>% 
   summarise(n = n(),
-            avg_pro = mean(data_value))
+            avg_pro = mean(data_value, na.rm = T)) 
+
 ```
 * 4.2 Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
 ```{r}
-ggplot(panel, aes(x = year, y = avg_pro )) +
-  geom_point()
-
+ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
+  geom_line(alpha = 0.4) +
+  labs(
+    x = "Year",
+    Y = "state-level averages",
+    title = "Distribution of state-level response averages over time",
+    caption = "Data from the BRFSS package"
+  ) +
+  facet_grid(~response) +
+  viridis::scale_color_viridis(
+    name = "state", 
+    discrete = TRUE
+  ) 
 
 ```
+* Comments: 
+(1). The five panel plot shows that overall health condition among states through the years from 2002 to 2010. 
+(2). The response of 'good' and 'very good' has a high percentage for all states around the country, implying that the health status for the general public of all states tend to concerntrates on the good or above as fair and poor are at a rather low percentage of the whole dataset. 
+(3). The between group difference among the State-level groups are not significant as the line shown in the graph tends to overlap with each other. 
+(4). For the time series data analysis, the trend of health status for state-level groups are stable as there is no evident flutuations over the years for these 5 panels.
+
 
 # problem 2
 
