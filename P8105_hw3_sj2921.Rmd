@@ -56,7 +56,7 @@ location <- brfss_df %>%
   group_by(state, year) %>% 
   summarise(n = n()) 
 
-ggplot(location, aes(x = year, y = n)) +
+ggplot(location, aes(x = year, y = n, color = state)) +
   geom_line(alpha = .3, aes(group = state)) +
   geom_point(alpha = .3) +
   labs(
@@ -64,8 +64,11 @@ ggplot(location, aes(x = year, y = n)) +
     x = "Year",
     y = "Number of observations in each state(n)",
     caption = "Data from the BRFSS package"
-  ) + scale_color_hue(name = "locationabbr", 
-                  h = c(200, 300))
+  )  + 
+  viridis::scale_color_viridis(
+    name = "year",
+    discrete = T
+  ) 
 ```
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 ```{r}
@@ -107,7 +110,6 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
 (2). The response of 'good' and 'very good' has a high percentage for all states around the country, implying that the health status for the general public of all states tend to concerntrates on the good or above as fair and poor are at a rather low percentage of the whole dataset. 
 (3). The between group difference among the State-level groups are not significant as the line shown in the graph tends to overlap with each other. 
 (4). For the time series data analysis, the trend of health status for state-level groups are stable as there is no evident flutuations over the years for these 5 panels.
-
 
 # problem 2
 
