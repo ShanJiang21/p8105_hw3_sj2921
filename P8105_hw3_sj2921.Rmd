@@ -80,13 +80,14 @@ brfss_df %>%
             sd_ex = sd(data_value)) %>% 
 knitr::kable(digits = 1)
 ```
+* Comments: From the graph above, we can see some outliers in the time-trend graph, as the Florida has two outliers in two years, so it shows a big variability across years.
+
 * 4.1 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). 
 ```{r}
 panel <- brfss_df %>%
   group_by(state, year, response) %>% 
   summarise(n = n(),
             avg_pro = mean(data_value, na.rm = T)) 
-
 ```
 * 4.2 Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
 ```{r}
@@ -117,18 +118,26 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
 
 **Instacart Dataset description**
 
-1. There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the order_id and user_id as main keys. 
-```{r}
+1. There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the `order_id` and `user_id` as keys to identify distinct entries. 
+
+* Key variables in the dataset
+* `aisle` is a character variable, which denotes the aisle for different products placement.
+* `department_id` is a integer variable, for implying the department the products belong to, there are `r sum(depart)` distinct departments in total.
+
+```{r results='hide'}
 # 21 departments: summary
-instacart %>% 
+depart <- instacart %>%  
+  janitor::clean_names() %>% 
+  distinct(department)  
+  
+instacart %>%  
   janitor::clean_names() %>% 
   group_by(department) %>% 
   summarize(n = n()) %>% 
   mutate(dep_ranking = min_rank(desc(n))) %>% 
   filter(dep_ranking > 20 | dep_ranking < 4)
 ```
-
-2. We know that there are in total 21 departments. According to the ranking for no.of orders in each department, the 3 top-ranked department are **produce, dairy eggs and snacks**. The produce department has received 409087 orders which are the double of the second-ranked dairy eggs. The least popular department is **bulk**, which only has 1359 orders.
+* **Department Popularity Ranking**: According to the ranking for no.of orders in each department, the 3 top-ranked department are **produce, dairy eggs and snacks**. The produce department has received 409087 orders which are the double of the second-ranked dairy eggs. The least popular department is **bulk**, which only received 1359 orders.
 
 ```{r}
 # The top-3 buyers for placing the most orders
@@ -158,10 +167,13 @@ Questions
 ```{r}
 
 ```
-2.
+2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
+
+3. most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
 
 
-3.
+4. Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
+
 
 
 # problem 3
