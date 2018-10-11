@@ -122,14 +122,15 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
 * Key variables in the dataset
 1. Both `aisle_id` and `aisle` are variable for identifying the location of products, which denotes the aisle for different products placement.
 
-2.`department_id` is a integer variable, for implying the department the products belong to, there are `r sum(depart)` distinct departments in total.
-
 ```{r results='hide'}
 # 21 departments: summary
 depart <- instacart %>%  
   janitor::clean_names() %>% 
   distinct(department)  
-  
+```
+2.`department_id` is a integer variable, for implying the department the products belong to, there are `r sum(depart)` distinct departments in total.
+```{r}
+# ranking the topr 3 and the laat departments: summary
 instacart %>%  
   janitor::clean_names() %>% 
   group_by(department) %>% 
@@ -138,13 +139,13 @@ instacart %>%
   filter(dep_ranking > 20 | dep_ranking < 4)
 ```
 * **Department Popularity Ranking**: According to the ranking for no.of orders in each department, the 3 top-ranked department are **produce, dairy eggs and snacks**. The produce department has received 409087 orders which are the double of the second-ranked dairy eggs. The least popular department is **bulk**, which only received 1359 orders.
-3. `user_id` is used for marking each customers in the dataset, there are `r user_unique` customers signed up in the symstem.
+
+3. `user_id` is used for marking each customers in the dataset, there are `r sum(user_unique)` customers signed up in the symstem.
 ```{r}
 user_unique <- instacart %>% 
-  distinct(user_id) %>% 
-  sum()
+  distinct(user_id) 
+  
 ```
-
 4. `order_id`, `reordered` and `add_to_cart_order` are used as integer to attach info for orders from users.There is a mean of `r mean(add_to_cart_order, na.rm =T)` add to cart order in the dataframe. 
 
 5. The one who has the highest purchasing power among users are the two **user_id:149753, user_id:197541**.Both of them have 80 orders and they have maintained a high reorder rate. 
@@ -195,11 +196,29 @@ instacart %>%
 * There are in total **`r sum(aisle)`** aisles in the dataset. 
 * **Aisle fresh vegetables** are the aisle most items ordered from.
 
-
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
+```{r}
+instacart %>% 
+  group_by(aisle) %>% 
+  summarize(n = n()) %>% 
+  ggplot(aes(x = aisle, y = n )) +
+  geom_point(alpha = 0.6) + labs(
+    title = "Items ordered in each aisle",
+    x = "aisle",
+    y = "No. of products",
+    caption = "Data from the instacart package"
+  ) + scale_color_hue(name = "Aisle", 
+                  h = c(200, 400)) +
+  facet_grid(~aisle)
+  
+```
+
 
 3. most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
+```{r}
+# Filter the products in aisles “baking ingredients”
 
+```
 
 4. Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 
