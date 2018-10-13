@@ -75,10 +75,12 @@ ggplot(location, aes(x = year, y = n, color = state)) +
 brfss_df %>% 
   filter(state == "NY" & response == "Excellent") %>%
   filter(year == "2002" | year == "2006" | year == "2010") %>% 
-  group_by(year) %>% 
-  summarise(mean_ex = mean(data_value),
-            sd_ex = sd(data_value)) %>% 
-knitr::kable(digits = 1)
+  group_by(state, year) %>% 
+  summarise(mean_ex = (mean(data_value, na.rm = T)),
+            sd_ex = sd(data_value, na.rm = T)) %>% 
+ 
+
+knitr::kable(digits = 2)
 ```
 * Comments: From the graph above, we can see some outliers in the time-trend graph, as the Florida has two outliers in two years, so it shows a big variability across years.
 
@@ -91,8 +93,7 @@ panel <- brfss_df %>%
 ```
 * 4.2 Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
 ```{r}
-ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
-  geom_line(alpha = 0.4) +
+ggplot(panel, aes(x = year, y = avg_pro, color = state)) + geom_line(alpha = 0.4) +
   labs(
     x = "Year",
     Y = "state-level averages",
@@ -102,7 +103,8 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) +
   facet_grid(~response) +
   viridis::scale_color_viridis(
     name = "state", 
-    discrete = TRUE
+    discrete = TRUE,
+    option = "inferno"
   ) 
 
 ```
@@ -199,21 +201,41 @@ instacart %>%
 * **Aisle fresh vegetables** is the aisle most items ordered from.
 
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
-```{r}
-instacart %>% 
-  group_by(aisle) %>% 
+
+%>% 
   summarize(n = n()) %>% 
-  ggplot(aes(x = aisle, y = n )) +
-  geom_point(alpha = 0.6) + labs(
+  
+```{r}
+aisle_graph <- instacart %>%
+  group_by(aisle_id) %>% 
+  summarize(n = n()) %>% 
+  arrange(desc(n)) 
+
+# The top 5 aisle 
+ instacart %>%
+  group_by(aisle_id) %>% 
+  summarize(n = n()) %>% 
+  top_n(5) %>% 
+  ggplot(aes(aisle, n, colour = factor(n)) +
+           geom_violin()
+ 
+# plot the aisle product number 
+ggplot(aisle_graph, aes(aisle, n, colour = factor(n) )) +
+  geom_col( alpha = 0.5) +
+  labs(
     title = "Items ordered in each aisle",
     x = "aisle",
     y = "No. of products",
     caption = "Data from the instacart package"
   ) + scale_color_hue(name = "Aisle", 
-                  h = c(200, 400)) +
-  facet_grid(~aisle)
-  
+                  h = c(50, 900)) + scale_x_discrete(labels = function(x) str_wrap(x, width = 90)) +
+  coord_flip()
+
+
 ```
+
+
+
 
 3. most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
 ```{r}
@@ -234,11 +256,11 @@ knitr::kable(rank_3, caption = "most popular item in each of the aisles")
 ```{r}
 # mean hour of the day 
 instacart %>% 
-  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream")%>% 
+  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") %>% 
   group_by(product_name, order_dow) %>% 
   summarize(mean_time = round(mean(order_hour_of_day), digits = 2) ) %>% 
   spread(key = "order_dow", value = "mean_time") %>% 
-    knitr::kable(caption = "mean hour of the day 2 items are ordered ")
+  knitr::kable(caption = "mean hour of the day 2 items are ordered ")
 ```
 
 
