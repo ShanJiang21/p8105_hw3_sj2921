@@ -41,9 +41,10 @@ response <-
 
 ```
 ##### Questions
-* 1.In 2002,  CT, MT, NH, NM, OR, TN, UT were observed at 7 locations.
+* 1.In 2002,  CT, FL, NC were observed at 7 locations.
 ```{r}
  brfss_df %>% 
+  filter(year == "2002") %>% 
   group_by(state) %>% 
   distinct(location) %>% 
   summarise(n = n()) %>% 
@@ -65,7 +66,7 @@ ggplot(location, aes(x = year, y = n, color = state)) +
     caption = "Data from the BRFSS package"
   )  + 
   viridis::scale_color_viridis(
-    name = "year",
+    name = "State",
     discrete = T
   ) 
 ```
@@ -128,7 +129,7 @@ depart <- instacart %>%
   janitor::clean_names() %>% 
   distinct(department)  
 ```
-2.`department_id` is a integer variable, for implying the department the products belong to, there are `r sum(depart)` distinct departments in total.
+2.`department_id` is a integer variable, for implying the department the products belong to, there are 21 distinct departments in total.
 ```{r}
 # ranking the topr 3 and the laat departments: summary
 instacart %>%  
@@ -139,14 +140,14 @@ instacart %>%
   filter(dep_ranking > 20 | dep_ranking < 4)
 ```
 * **Department Popularity Ranking**: According to the ranking for no.of orders in each department, the 3 top-ranked department are **produce, dairy eggs and snacks**. The produce department has received 409087 orders which are the double of the second-ranked dairy eggs. The least popular department is **bulk**, which only received 1359 orders.
-
-3. `user_id` is used for marking each customers in the dataset, there are `r sum(user_unique)` customers signed up in the symstem.
 ```{r}
 user_unique <- instacart %>% 
   distinct(user_id) 
   
 ```
-4. `order_id`, `reordered` and `add_to_cart_order` are used as integer to attach info for orders from users.There is a mean of `r mean(add_to_cart_order, na.rm =T)` add to cart order in the dataframe. 
+3. `user_id` is used for marking each customers in the dataset, there are `r sum(user_unique)` customers signed up in the symstem.
+
+4. `order_id`, `reordered` and `add_to_cart_order` are used as integer to attach info for orders from users.There is a mean of `r mean(instacart$add_to_cart_order, na.rm =T)` add to cart order in the dataframe. 
 
 5. The one who has the highest purchasing power among users are the two **user_id:149753, user_id:197541**.Both of them have 80 orders and they have maintained a high reorder rate. 
 The top-3 buyers for placing the most orders are presented as: 
@@ -172,6 +173,7 @@ instacart %>%
 ```
 * The most popular product are **Bananas** which appeared in 18726 orders. Bag of Organic Bananas, following as the second, they appeared in 15480 orders, so the supply of bananas should be addressed.
 
+7. `order_dow` means the day in the week when the order was established.
 
 #### Questions
 -
@@ -194,7 +196,7 @@ instacart %>%
   filter(aisle_ranking < 2) 
 ```
 * There are in total **`r sum(aisle)`** aisles in the dataset. 
-* **Aisle fresh vegetables** are the aisle most items ordered from.
+* **Aisle fresh vegetables** is the aisle most items ordered from.
 
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
 ```{r}
@@ -213,15 +215,31 @@ instacart %>%
   
 ```
 
-
 3. most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
 ```{r}
+library(knitr)
 # Filter the products in aisles “baking ingredients”
+rank_3 <- instacart %>% 
+  filter(aisle == "baking ingredients" | aisle == "dog food care" | aisle == "packaged vegetables fruits") %>% 
+  group_by(aisle, product_name) %>% 
+  summarise(n = n()) %>% 
+  mutate(product_ranking = min_rank(desc(n))) %>% 
+  filter(product_ranking < 2) 
 
+# Print the table with knitr
+knitr::kable(rank_3, caption = "most popular item in each of the aisles")
 ```
 
 4. Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
-
+```{r}
+# mean hour of the day 
+instacart %>% 
+  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream")%>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(mean_time = round(mean(order_hour_of_day), digits = 2) ) %>% 
+  spread(key = "order_dow", value = "mean_time") %>% 
+    knitr::kable(caption = "mean hour of the day 2 items are ordered ")
+```
 
 
 # problem 3
@@ -289,16 +307,30 @@ sum(is.na(max_mean))
 
 # Graphing the temp 
 ggplot(temp_mean, aes(x = year , y =  mean_tem, color = id)) +
-  geom_point() 
+  geom_violin () 
 
 ```
 * The outliers:
 
 * 
-7. Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+7.  (i) Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 ```{r}
+ny_noaa %>% 
+  ggplot(aes(x = tmax, y = tmin)) + 
+    geom_line(na.rm = TRUE) +
+    ggtitle("The max temperature and mini temperature in")+
+    theme(text = element_text(size = 18))+ 
+  facet_grid()
 
 
+```
 
+8.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+```{r}
+ny_noaa %>% 
+  group_by(year) %>%
+  filter(snow < 100 & snow > 0) %>% 
+  ggplot(aes(x = year, y = snow, fill = year)) + geom_boxplot()
+    
 ```
 
