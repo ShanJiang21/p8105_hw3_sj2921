@@ -202,23 +202,34 @@ instacart %>%
 
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
 
-%>% 
-  summarize(n = n()) %>% 
   
 ```{r}
+# The top 5 aisle "Best seller"
 aisle_graph <- instacart %>%
-  group_by(aisle_id) %>% 
+  group_by(aisle) %>% 
   summarize(n = n()) %>% 
-  arrange(desc(n)) 
+  arrange(desc(n)) %>% 
+  top_n(5) 
 
-# The top 5 aisle 
- instacart %>%
-  group_by(aisle_id) %>% 
-  summarize(n = n()) %>% 
-  top_n(5) %>% 
-  ggplot(aes(aisle, n, colour = factor(n)) +
-           geom_violin()
+# Order the aisle sensibly for their department category
+aisle_df <- instacart %>%
+    group_by(aisle, department) %>% 
+    summarize(n = n()) %>% 
+    arrange(desc(n)) %>% 
+    filter(n >= 23000) %>% 
+    ggplot(aes(x = aisle, y = n, color = department)) +
+           geom_bar(position = "fill",stat = "identity") +
+   viridis::scale_color_viridis(
+    name = "aisle id",
+    discrete = T
+   ) +
+  coord_flip()
  
+
+# plot the aisle point graph 
+
+
+
 # plot the aisle product number 
 ggplot(aisle_graph, aes(aisle, n, colour = factor(n) )) +
   geom_col( alpha = 0.5) +
@@ -269,8 +280,11 @@ instacart %>%
 1.load the data
 ```{r}
 # Import the ny_noaa data, exclude variables and format the data by using appropriate names.
-    ny_noaa %>% 
-    janitor::clean_names() 
+ny_noaa <- ny_noaa %>% 
+    janitor::clean_names() %>% 
+     mutate(prcp = as.numeric(prcp) / 10,
+         tmax = as.numeric(tmax) / 10,
+         tmin = as.numeric(tmin) / 10)
 
 ```
 2.a short description of the dataset
@@ -340,8 +354,8 @@ ggplot(temp_mean, aes(x = year , y =  mean_tem, color = id)) +
 ny_noaa %>% 
   ggplot(aes(x = tmax, y = tmin)) + 
     geom_line(na.rm = TRUE) +
-    ggtitle("The max temperature and mini temperature in")+
-    theme(text = element_text(size = 18))+ 
+    ggtitle(title = "hexagonal heatmap of maximum temperature vs. minimum temperature" ) +
+    theme(text = element_text(size = 18)) + 
   facet_grid()
 
 
@@ -350,9 +364,8 @@ ny_noaa %>%
 8.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 ```{r}
 ny_noaa %>% 
-  group_by(year) %>%
-  filter(snow < 100 & snow > 0) %>% 
-  ggplot(aes(x = year, y = snow, fill = year)) + geom_boxplot()
-    
+  filter(snow > 0 & snow < 100) %>% 
+  ggplot(aes(x = year, y = snow, fill = year)) + 
+  geom_boxplot()
 ```
 
