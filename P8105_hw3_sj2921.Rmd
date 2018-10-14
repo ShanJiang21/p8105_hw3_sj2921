@@ -158,7 +158,9 @@ user_unique <- instacart %>%
 4. `order_id`, `reordered` and `add_to_cart_order` are used as integer to attach info for orders from users.There is a mean of `r mean(instacart$add_to_cart_order, na.rm =T)` add to cart order in the dataframe. 
 
 5. The one who has the highest purchasing power among users are the two **user_id:149753, user_id:197541**.Both of them have 80 orders and they have maintained a high reorder rate. 
-The top-3 buyers for placing the most orders are presented as: 
+
+* The top-3 buyers for placing the most orders are presented as:
+
 ```{r}
 # The top-3 buyers for placing the most orders
 instacart %>% 
@@ -179,6 +181,7 @@ instacart %>%
   mutate(pro_ranking = min_rank(desc(n))) %>% 
   filter(pro_ranking < 3)
 ```
+
 * The most popular product are **Bananas** which appeared in 18726 orders. Bag of Organic Bananas, following as the second, they appeared in 15480 orders, so the supply of bananas should be addressed.
 
 7. `order_dow` means the day in the week when the order was established.
@@ -232,7 +235,7 @@ The above shows the top 5 aisle in the dataset.
     ggplot(aes(x = reorder(aisle, no_items), y = no_items, fill = department)) + # plot the aisle point graph 
     geom_col() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size = 9) ) +
+        axis.text = element_text(size = 7.5) ) +
   labs(
     title = "Items ordered in each aisle",
     x = "aisle",
@@ -240,7 +243,7 @@ The above shows the top 5 aisle in the dataset.
     caption = "Data from the instacart package"
   ) + 
   theme(
-    legend.title = element_text(size = 10), 
+    legend.title = element_text(size = 9), 
     legend.text = element_text(size = 8),
     legend.background = element_rect(fill = "lightblue", 
                                   size = 0.4, linetype = "solid"),
@@ -427,6 +430,7 @@ ggplot(temin_mean, aes(x = year, y = mean_temin )) +
   ) +
   facet_grid(~ month)
 ```
+
 * The mini temparature graph shows in Janaury the tempature varies more than that in July. 
 
 * The outliers:
@@ -454,7 +458,7 @@ hex_graph <-
  
 
 7.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
-```{r fig.height=15, fig.width=12}
+```{r fig.height= 20, fig.width=16}
 snow_graph <- ny_noaa %>% 
   filter(snow > 0 & snow < 100) %>% 
   mutate(year = as.character(year)) %>% 
@@ -471,7 +475,7 @@ snow_graph <- ny_noaa %>%
           legend.direction = "horizontal")
 
 
-gridExtra::grid.arrange(hex_graph,  snow_graph, heights = c(0.55,  0.45), nrow = 2 )
+gridExtra::grid.arrange(hex_graph,  snow_graph, heights = c(0.5,  0.5), nrow = 2 )
 ```
 
 
