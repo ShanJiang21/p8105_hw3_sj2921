@@ -211,41 +211,30 @@ aisle_graph <- instacart %>%
 ```
 The above shows the top 5 aisle in the dataset.
 ```{r}
-# Order the aisle sensibly for their department category
+# Order the aisle sensibly including their department category
 aisle_df <- instacart %>%
     group_by(aisle, department) %>% 
-    summarize(n = n()) %>% 
+    summarize(n = n()) %>%
     arrange(desc(n)) %>% 
-    filter(n >= 23000) %>% 
-    ggplot(aes(x = aisle, y = n, color = department)) +
-           geom_bar(position = "fill",stat = "identity") +
+# seperate the aisle into several levels for graphing
+    rename(no_items = n) %>% 
+    ggplot(aes(x = aisle, y = no_items, color = department)) + # plot the aisle point graph 
+           geom_point() +
+  ylim(0,20000) +
    viridis::scale_color_viridis(
     name = "aisle id",
     discrete = T
    ) +
-  coord_flip()
- 
-
-# plot the aisle point graph 
-
-
-
-# plot the aisle product number 
-ggplot(aisle_graph, aes(aisle, n, colour = factor(n) )) +
-  geom_col( alpha = 0.5) +
   labs(
     title = "Items ordered in each aisle",
     x = "aisle",
     y = "No. of products",
     caption = "Data from the instacart package"
-  ) + scale_color_hue(name = "Aisle", 
-                  h = c(50, 900)) + scale_x_discrete(labels = function(x) str_wrap(x, width = 90)) +
-  coord_flip()
-
-
+  ) +
+  coord_flip() + 
+  facet_grid(.~ department) 
 ```
-
-
+2. From the graph above, the point represents the number of products in each aisle and the color represents the department in which every product falls in. As there are so many rows/entries, I need to use point instead of bar/col to show the results as it is more clear. 
 
 
 3. most popular item in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”.
@@ -262,17 +251,27 @@ rank_3 <- instacart %>%
 # Print the table with knitr
 knitr::kable(rank_3, caption = "most popular item in each of the aisles")
 ```
+3. This is a 3*2 table and there are three variables -- "aisle" and "product name" and "No. of each product". 
+* From the table, we can know that:
+* On "baking ingredients" aisle, "Light Brown Sugar" is the most popular;
+* On  "dog food care" aisle, "Snacks sticks Chicken & Rice Recipe Dog Treats" are the most popular ones;
+* On"packages vegetables fruits" aisle, "Organic Baby Spinach" is the most popular.
+
 
 4. Make a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week; format this table for human readers (i.e. produce a 2 x 7 table).
 ```{r}
 # mean hour of the day 
 instacart %>% 
-  filter(product_name == "Pink Lady Apples" | product_name == "Coffee Ice Cream") %>% 
+  filter(product_name %in% c("Pink Lady Apples", "Coffee Ice Cream")) %>% 
   group_by(product_name, order_dow) %>% 
   summarize(mean_time = round(mean(order_hour_of_day), digits = 2) ) %>% 
   spread(key = "order_dow", value = "mean_time") %>% 
-  knitr::kable(caption = "mean hour of the day 2 items are ordered ")
+  knitr::kable(caption = "mean hour of the day 2 items are ordered ", digits = 2)
 ```
+(4) Make a table showing the mean hour of the day:
+
+The result is a 2x7 table. There are 7 variables as column names ranging from 0 to 6, the row are the specific day in a week. The cell values are means of the hours of each day in a week.
+
 
 
 # problem 3
