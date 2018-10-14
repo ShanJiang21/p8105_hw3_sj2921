@@ -454,7 +454,7 @@ hex_graph <-
  
 
 7.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
-```{r}
+```{r fig.height=15, fig.width=12}
 snow_graph <- ny_noaa %>% 
   filter(snow > 0 & snow < 100) %>% 
   mutate(year = as.character(year)) %>% 
@@ -471,7 +471,7 @@ snow_graph <- ny_noaa %>%
           legend.direction = "horizontal")
 
 
-gridExtra::grid.arrange(hex_graph,  snow_graph, heights = c(0.7,  0.3), nrow = 2 )
+gridExtra::grid.arrange(hex_graph,  snow_graph, heights = c(0.55,  0.45), nrow = 2 )
 ```
 
 
