@@ -221,8 +221,8 @@ The above shows the top 5 aisle in the dataset.
 
 ```{r}
 knitr::opts_chunk$set(
-  fig.width = 16,
-  fig.height = 10
+  fig.width = 18,
+  fig.height = 12
 )
 ```
 
@@ -238,7 +238,7 @@ knitr::opts_chunk$set(
     ggplot(aes(x = reorder(aisle, no_items), y = no_items, fill = department)) + # plot the aisle point graph 
     geom_col() +
     theme(axis.text.x = element_text(angle = 90, hjust = 1),
-        axis.text = element_text(size = 6) ) +
+        axis.text = element_text(size = 9) ) +
   labs(
     title = "Items ordered in each aisle",
     x = "aisle",
@@ -246,8 +246,8 @@ knitr::opts_chunk$set(
     caption = "Data from the instacart package"
   ) + 
   theme(
-    legend.title = element_text(size = 9), 
-    legend.text = element_text(size = 7),
+    legend.title = element_text(size = 10), 
+    legend.text = element_text(size = 8),
     legend.background = element_rect(fill = "lightblue", 
                                   size = 0.4, linetype = "solid"),
     legend.position = "right")
@@ -477,7 +477,9 @@ snow_graph <- ny_noaa %>%
           legend.text = element_text(size = 7),
           legend.direction = "horizontal")
 
-gridExtra::grid.arrange(hex_graph, snow_graph, nrow = 2 )
+blank <- rectGrob(gp=gpar(col="white")) # make a white space
+
+gridExtra::grid.arrange(hex_graph, snow_graph, heights = c(0.7, 0.05, 0.25), nrow = 2 )
 ```
 
 
