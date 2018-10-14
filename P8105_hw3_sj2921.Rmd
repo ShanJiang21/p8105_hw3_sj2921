@@ -27,6 +27,7 @@ brfss_df <-
 # Focus on overall health topic
     filter(topic == "Overall Health") %>%
     separate(locationdesc, into = c('state', 'location'), sep = ' - ') %>%
+    mutate(response = as.factor(response)) %>%
     filter(response == "Excellent"  | response == "Very good" | response == "Good" | response == "Fair" | response == "Poor") %>% 
     select(-locationabbr, -class, -topic,  -question, -c(confidence_limit_low:geo_location))
 
@@ -276,19 +277,19 @@ The result is a 2x7 table. There are 7 variables as column names ranging from 0 
 
 # problem 3
 * NY NOAA data
-1.load the data
+1.load the data and do cleaning for it.
 ```{r}
 # Import the ny_noaa data, exclude variables and format the data by using appropriate names.
+data("ny_noaa")
+
+# clean the data
 ny_noaa <- ny_noaa %>% 
-    janitor::clean_names() %>% 
-     mutate(prcp = as.numeric(prcp) / 10,
-         tmax = as.numeric(tmax) / 10,
-         tmin = as.numeric(tmin) / 10)
+    janitor::clean_names() 
 
 ```
-2.a short description of the dataset
-The ny_noaa data set contains 7 variables and 2595176 observation value.
 
+**a short description of the dataset**
+The ny_noaa data set contains 7 variables and 2595176 observation value.
 - some key variables include: 
 * prcp: The daily precipitation volume in the unique location(id as key). 
 * snow: The daily snowfall volume in the unique location(id as key)
@@ -298,12 +299,15 @@ sum(is.na(ny_noaa$prcp))
 sum(is.na(ny_noaa$snow))
 sum(is.na(ny_noaa$snwd))
 ```
-3. missing data percentage is an issue for snow and snwd as the percentage of missing values accounts for more than 22% for snwd and over 14% for snow.
+**missing value detection**
+2. missing data percentage is an issue for snow and snwd as the percentage of missing values accounts for more than 22% for snwd and over 14.68% for snow.
 * prcp:  `r sum(is.na(ny_noaa$prcp))/2595176`  
 * snow:  `r sum(is.na(ny_noaa$snow))/2595176`  
 * snwd:  `r sum(is.na(ny_noaa$snwd))/2595176`
 
-4. Create separate variables for year, month, and day.
+* The high missing data rate which is noted on the data webpage is because that for weather station, they do not play a role of collecting all data, they just collect the available data(so there are some variables not included in their daily work) , so there are a high missing data rate.
+
+3. Create separate variables for year, month, and day.
 ```{r}
 # Mutate separate variables for year, month, and day.
 ny_noaa <-
