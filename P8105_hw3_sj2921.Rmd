@@ -370,12 +370,16 @@ ggplot(temax_mean, aes(x = year, y = mean_temax )) +
   facet_grid(~month)
 
 ```
+Is there any observable / interpretable structure?
+
 * The graph shows in July the average temperature is always higher than that in January which is common sense as the season varies and it is in the Northern hemisphere. 
 
-* In general, there is an evident trend in that the climate gets warmer in recent decade than that in the 1980s. For 
+* In general, there is an evident trend in that the climate gets warmer in recent decade than that in the 1980s. 
 
-Is there any observable / interpretable structure? Any outliers?
-* But the summers are always hot in NY. There are some outliers in the graph. There are several different stations in each panel that recorded cooler tempreture than other stations. It is unclear whether this is due to machine error or other reasons.
+Any outliers?
+* But the summers are always hot in NY. There are some outliers in the graph, like in the jan panel. 1982, 2004, 2005. In the July graph, there are also some across the years. 
+
+* There are a few extreme values in each panel that recorded cooler/higher tempreture than other stations. It remains unknown whether it is because of mistakes in recording or other reasons.
 
 ### Mini temp in June and July
 ```{r}
@@ -393,7 +397,7 @@ temin_mean <-
 ggplot(temin_mean, aes(x = year, y = mean_temin )) +
   geom_point(aes(color = id, alpha = 1/100)) +
   labs(
-    title = "Max tempreture in NY weather stations in January and July (1991-2010)", 
+    title = "Mini tempreture in NY weather stations in January and July (1991-2010)", 
     y = "Tempreture (°C)", 
     x = "Year",
     caption = "Data from ny_noaa package") +
@@ -406,8 +410,10 @@ ggplot(temin_mean, aes(x = year, y = mean_temin )) +
   ) +
   facet_grid(~ month)
 ```
-* The outliers:
+* The mini temparature graph shows in Janaury the tempature varies more than that in July. 
 
+* The outliers:
+Also, there are some extreme points which are not falling into the overlapping part of the graph. 
 * 
 7.(i)  Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 ```{r}
