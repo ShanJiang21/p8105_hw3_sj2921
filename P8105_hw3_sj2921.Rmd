@@ -198,19 +198,19 @@ instacart %>%
   filter(aisle_ranking < 2) 
 ```
 * There are in total **`r sum(aisle)`** aisles in the dataset. 
-* **Aisle fresh vegetables** is the aisle most items ordered from.
+* **Aisle fresh vegetables** is the aisle most items ordered from, the id is 83.
 
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
-
-  
 ```{r}
-# The top 5 aisle "Best seller"
+# Show the top 5 aisle "Best seller"
 aisle_graph <- instacart %>%
   group_by(aisle) %>% 
   summarize(n = n()) %>% 
   arrange(desc(n)) %>% 
   top_n(5) 
-
+```
+The above shows the top 5 aisle in the dataset.
+```{r}
 # Order the aisle sensibly for their department category
 aisle_df <- instacart %>%
     group_by(aisle, department) %>% 
