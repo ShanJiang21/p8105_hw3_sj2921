@@ -219,14 +219,8 @@ The above shows the top 5 aisle in the dataset.
 
 - set the graph size enable others to see clearly
 
-```{r}
-knitr::opts_chunk$set(
-  fig.width = 18,
-  fig.height = 12
-)
-```
 
-```{r}
+```{r fig.asp = 1, fig.width = 12}
 # Order the aisle sensibly including their department category
  instacart %>%
     group_by(aisle, department) %>% 
@@ -459,7 +453,6 @@ hex_graph <-
 ```
  
 
-
 7.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 ```{r}
 snow_graph <- ny_noaa %>% 
@@ -477,9 +470,8 @@ snow_graph <- ny_noaa %>%
           legend.text = element_text(size = 7),
           legend.direction = "horizontal")
 
-blank <- rectGrob(gp=gpar(col="white")) # make a white space
 
-gridExtra::grid.arrange(hex_graph, snow_graph, heights = c(0.7, 0.05, 0.25), nrow = 2 )
+gridExtra::grid.arrange(hex_graph,  snow_graph, heights = c(0.7,  0.3), nrow = 2 )
 ```
 
 
