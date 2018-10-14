@@ -317,11 +317,13 @@ ny_noaa <-
                  month = as.numeric(format(date, format = "%m")),
                  day = as.numeric(format(date, format = "%d"))) 
 # Convert the month into the month name
-ny_noaa$month <- as.character(month.name[ny_noaa$month]) %>% 
+ny_noaa$month <- as.character(month.name[ny_noaa$month]) 
 # Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. 
-  mutate(prcp = ifelse(is.na(prcp), NA, prcp / 10),
-         tmax  = ifelse(is.na(tmax), NA, as.numeric(tmax) / 10),
-         tmin  = ifelse(is.na(tmin), NA, as.integer(tmin) / 10)) 
+  ny_noaa <- ny_noaa %>% 
+  mutate( prcp = as.numeric(prcp, na.rm = T )/10, 
+          tmax  = as.numeric(tmax, na.rm =T )/10,
+          tmin  = as.numeric(tmin, na.rm =T )/10)
+  # Convert the temp from character to numeric vector.
 ```
 * After the formatting, the date variable is organized in year-month-date. * Also, for pricipitation and temperature, the common practice is to convert it into the mm units and ºc which can be interpreted easily. 
 
@@ -332,28 +334,76 @@ ny_noaa %>%
   summarize(n = n()) %>% 
   filter(min_rank(desc(n)) < 2)
 ```
-The most commonly observed value is 0 as the snowfall is observed by days.Usually it just snow at specific low temp or winter season, so the most commonly value appeared here is 0.
+* The most commonly observed value is 0 as the snowfall is observed by days. 
 
-6. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+* Usually it just snow when falls  below 0ºC or in winter season, so the most commonly value appeared here is 0 make sense.
+
+5. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
 ```{r}
-# Convert the temp from character to interger vector.
-ny_noaa$tmin <- as.numeric(ny_noaa$tmin)
-  ny_noaa$tmax <- as.numeric(ny_noaa$tmax)
   
 # Average temperature in January and in July in each station across years.
-temp_mean <- ny_noaa %>%
-  filter(month == "January" | month == "July" ) %>% 
+temax_mean <- 
+  ny_noaa %>%
+  select(id, year, month, day, tmax, tmin) %>% 
+  filter( month ==  "January" | month == "July" ) %>% 
   group_by(id, year, month) %>% 
   summarise(
-    mean_tem = mean(tmax + tmin , na.rm = T)
-  )
-# detect the na value in the dataset
-sum(is.na(max_mean))
+    mean_temax = mean(tmax, na.rm = T)) %>% 
+    filter(is.na(mean_temax) == F)
+
+# The max temp graph over the years in NY 
+ggplot(temax_mean, aes(x = year, y = mean_temax )) +
+  geom_point(aes(color = id, alpha = 1/100)) +
+  labs(
+    title = "Max tempreture in NY weather stations in January and July (1991-2010)", 
+    y = "Tempreture (°C)", 
+    x = "Year",
+    caption = "Data from ny_noaa package") +
+  scale_x_continuous(breaks = c(1981, 1985, 1990, 1995, 2000, 2005, 2010),
+                  labels = c("1981", "1985", "1990", "1995", "2000", "2005", "2010")) +
+  scale_y_continuous(breaks = c(-10, 0, 10, 20, 30),
+                     labels = c("-10°C", "0°C", "10°C", "20°C", "30°C")) + theme(legend.position = "none")  +
+ viridis::scale_color_viridis(
+    option = "plasma", 
+    discrete = TRUE
+  ) +
+  facet_grid(~month)
+
+```
+* The graph shows in July the average temperature is always higher than that in January which is common sense as the season varies and it is in the Northern hemisphere. 
+
+* In general, there is an evident trend in that the climate gets warmer in recent decade than that in the 1980s. 
+
+* But the summers are always hot in NY. There are some outliers in the graph. There are several different stations in each panel that recorded cooler tempreture than other stations. It is unclear whether this is due to machine error or other reasons.
+
+
+```{r}
+# The mini temperature graph over the years in NY 
+temin_mean <- 
+  ny_noaa %>%
+  select(id, year, month, day, tmax, tmin) %>% 
+  filter( month ==  "January" | month == "July" ) %>% 
+  group_by(id, year, month) %>% 
+  summarise(
+    mean_temin = mean(tmin, na.rm = T)) %>% 
+    filter(is.na(mean_temin) == F)
 
 # Graphing the temp 
-ggplot(temp_mean, aes(x = year , y =  mean_tem, color = id)) +
-  geom_violin () 
-
+ggplot(temin_mean, aes(x = year, y = mean_temin )) +
+  geom_point(aes(color = id, alpha = 1/100)) +
+  labs(
+    title = "Max tempreture in NY weather stations in January and July (1991-2010)", 
+    y = "Tempreture (°C)", 
+    x = "Year",
+    caption = "Data from ny_noaa package") +
+  scale_x_continuous(breaks = c(1981, 1985, 1990, 1995, 2000, 2005, 2010),
+                  labels = c("1981", "1985", "1990", "1995", "2000", "2005", "2010")) +
+  scale_y_continuous(breaks = c(-10, 0, 10, 20, 30),
+                     labels = c("-10°C", "0°C", "10°C", "20°C", "30°C")) + theme(legend.position = "none")  +
+ viridis::scale_color_viridis(
+    discrete = TRUE
+  ) +
+  facet_grid(~ month)
 ```
 * The outliers:
 
