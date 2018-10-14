@@ -9,12 +9,7 @@ output: github_document
 # Set the graph properties(theme, color and size) for ggplot
 library(ggplot2)
 library(readxl)
-knitr::opts_chunk$set(
-  fig.width = 6,
-  fig.asp = .6,
-  out.width = "90%"
-)
-theme_set(theme_bw() + theme(legend.position = "bottom"))
+
 ```
 * Import the data
 ```{r echo=FALSE,results='hide'}
@@ -37,7 +32,7 @@ brfss_df <-
 ```{r}
 # Convert response to build a factor; Specify the levels of response_vector
 response <- 
-  factor(brfss_df$response, 
+  factor(brfss_df$response,
   levels <- (c("Excellent","Very Good", "Good", "Fair", "Poor")))
 
 ```
@@ -69,8 +64,14 @@ ggplot(location, aes(x = year, y = n, color = state)) +
   viridis::scale_color_viridis(
     name = "State",
     discrete = T
-  ) 
+  ) +
+  theme(plot.title = element_text(size = 9, face = "bold"))
 ```
+
+* The spaghetti plot shows there are no more than 10 observed location during 2002 - 2010 for a lot of states. 
+* Florida has experienced a sharp increase over the years before 2007 there are few locations, so it is hard to do a time series in that case. 
+
+
 * 3. Make a table showing, for the years 2002, 2006, and 2010, the mean and standard deviation of the proportion of “Excellent” responses across locations in NY State.
 ```{r}
 brfss_df %>% 
@@ -79,11 +80,11 @@ brfss_df %>%
   group_by(state, year) %>% 
   summarise(mean_ex = (mean(data_value, na.rm = T)),
             sd_ex = sd(data_value, na.rm = T)) %>% 
- 
-
 knitr::kable(digits = 2)
 ```
-* Comments: From the graph above, we can see some outliers in the time-trend graph, as the Florida has two outliers in two years, so it shows a big variability across years.
+
+### Comments: 
+* From the graph above, we can see some outliers in the time-trend graph, as the Florida has two outliers in two years, so it shows a big variability across years.
 
 * 4.1 For each year and state, compute the average proportion in each response category (taking the average across locations in a state). 
 ```{r}
@@ -92,7 +93,9 @@ panel <- brfss_df %>%
   summarise(n = n(),
             avg_pro = mean(data_value, na.rm = T)) 
 ```
+
 * 4.2 Make a five-panel plot that shows, for each response category separately, the distribution of these state-level averages over time.
+
 ```{r}
 ggplot(panel, aes(x = year, y = avg_pro, color = state)) + geom_line(alpha = 0.4) +
   labs(
@@ -106,10 +109,12 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) + geom_line(alpha = 0.4
     name = "state", 
     discrete = TRUE,
     option = "inferno"
-  ) 
+  ) +
+  theme(axis.text = element_text(size = 4))
 
 ```
-* Comments: 
+
+#### Comments: 
 (1). The five panel plot shows that overall health condition among states through the years from 2002 to 2010. 
 (2). The response of 'good' and 'very good' has a high percentage for all states around the country, implying that the health status for the general public of all states tend to concerntrates on the good or above as fair and poor are at a rather low percentage of the whole dataset. 
 (3). The between group difference among the State-level groups are not significant as the line shown in the graph tends to overlap with each other. 
@@ -121,7 +126,7 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) + geom_line(alpha = 0.4
 
 **Instacart Dataset description**
 
-1. There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the `order_id` and `user_id` as keys to identify distinct entries. 
+There are **1384617 observations** and **15** variables in the dataset. The dataset is a long dataset using the `order_id` and `user_id` as keys to identify distinct entries. 
 
 * Key variables in the dataset
 1. Both `aisle_id` and `aisle` are variable for identifying the location of products, which denotes the aisle for different products placement.
@@ -204,36 +209,50 @@ instacart %>%
 2. Make a plot that shows the number of items ordered in each aisle. Order aisles sensibly, and organize your plot so others can read it.
 ```{r}
 # Show the top 5 aisle "Best seller"
-aisle_graph <- instacart %>%
+instacart %>%
   group_by(aisle) %>% 
   summarize(n = n()) %>% 
   arrange(desc(n)) %>% 
   top_n(5) 
 ```
 The above shows the top 5 aisle in the dataset.
+
+- set the graph size enable others to see clearly
+
+```{r}
+knitr::opts_chunk$set(
+  fig.width = 16,
+  fig.height = 10
+)
+```
+
 ```{r}
 # Order the aisle sensibly including their department category
-aisle_df <- instacart %>%
+ instacart %>%
     group_by(aisle, department) %>% 
     summarize(n = n()) %>%
     arrange(desc(n)) %>% 
 # seperate the aisle into several levels for graphing
     rename(no_items = n) %>% 
-    ggplot(aes(x = aisle, y = no_items, color = department)) + # plot the aisle point graph 
-           geom_point() +
-  ylim(0,20000) +
-   viridis::scale_color_viridis(
-    name = "aisle id",
-    discrete = T
-   ) +
+    mutate(as.character(no_items)) %>% 
+    ggplot(aes(x = reorder(aisle, no_items), y = no_items, fill = department)) + # plot the aisle point graph 
+    geom_col() +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1),
+        axis.text = element_text(size = 6) ) +
   labs(
     title = "Items ordered in each aisle",
     x = "aisle",
     y = "No. of products",
     caption = "Data from the instacart package"
-  ) +
-  coord_flip() + 
-  facet_grid(.~ department) 
+  ) + 
+  theme(
+    legend.title = element_text(size = 9), 
+    legend.text = element_text(size = 7),
+    legend.background = element_rect(fill = "lightblue", 
+                                  size = 0.4, linetype = "solid"),
+    legend.position = "right")
+
+  
 ```
 2. From the graph above, the point represents the number of products in each aisle and the color represents the department in which every product falls in. As there are so many rows/entries, I need to use point instead of bar/col to show the results as it is more clear. 
 
@@ -252,6 +271,8 @@ rank_3 <- instacart %>%
 # Print the table with knitr
 knitr::kable(rank_3, caption = "most popular item in each of the aisles")
 ```
+
+**Summary**
 3. This is a 3*2 table and there are three variables -- "aisle" and "product name" and "No. of each product". 
 * From the table, we can know that:
 * On "baking ingredients" aisle, "Light Brown Sugar" is the most popular;
@@ -269,7 +290,9 @@ instacart %>%
   spread(key = "order_dow", value = "mean_time") %>% 
   knitr::kable(caption = "mean hour of the day 2 items are ordered ", digits = 2)
 ```
-(4) Make a table showing the mean hour of the day:
+
+
+#### Table summary
 
 The result is a 2x7 table. There are 7 variables as column names ranging from 0 to 6, the row are the specific day in a week. The cell values are means of the hours of each day in a week.
 
@@ -450,12 +473,14 @@ snow_graph <- ny_noaa %>%
          caption = "Data from ny_noaa set") +
   scale_x_discrete(breaks = c(1981, 1986, 1991, 1996, 2000, 2005, 2010)) +
     theme(plot.title = element_text(size = 10, face = "bold"),
-          legend.key.size = unit(0.1, "cm"), 
+          legend.key.size = unit(0.05, "cm"), 
           legend.text = element_text(size = 7),
           legend.direction = "horizontal")
 
 gridExtra::grid.arrange(hex_graph, snow_graph, nrow = 2 )
 ```
+
+
 * Since making a scatterplot with lots of data, there’s a limit as overplotting using alpha levels and transparency. From the hex graph we can see each hexagon square represents a collection of points. In the lighter area, we can check the concentration of temperature and if there is any correlation between the minimun tem and the maximum temp.
 
 * From the plotwe can see it is a left-skewed one as majority of snow volume concerntrates below the 25mm across years. It means it is not snowing heavily for normal cases in NY. 
