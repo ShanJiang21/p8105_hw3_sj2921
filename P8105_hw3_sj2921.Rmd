@@ -358,7 +358,8 @@ ny_noaa %>%
 
 * Usually it just snow when falls  below 0ºC or in winter season, so the most commonly value appeared here is 0 make sense.
 
-5. two-panel plot showing the average temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+5. two-panel plot showing the average temperature in January and in July in each station across years. 
+
 ```{r}
   
 # Average temperature in January and in July in each station across years.
@@ -436,7 +437,7 @@ ggplot(temin_mean, aes(x = year, y = mean_temin )) +
 * The outliers:
 Also, there are some extreme points which are not falling into the overlapping part of the graph. However, there a fewer outliers than the max temperature two-panel graph.
 
-6.(i)  Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
+6. Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 ```{r}
 hex_graph <-
   ggplot(ny_noaa, aes(x = tmin, y = tmax)) +
@@ -457,8 +458,8 @@ hex_graph <-
 ```
  
 
-7.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
-```{r fig.height= 20, fig.width=16}
+7.make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+```{r fig.height= 15, fig.width=12}
 snow_graph <- ny_noaa %>% 
   filter(snow > 0 & snow < 100) %>% 
   mutate(year = as.character(year)) %>% 
