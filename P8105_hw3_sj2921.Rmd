@@ -372,11 +372,12 @@ ggplot(temax_mean, aes(x = year, y = mean_temax )) +
 ```
 * The graph shows in July the average temperature is always higher than that in January which is common sense as the season varies and it is in the Northern hemisphere. 
 
-* In general, there is an evident trend in that the climate gets warmer in recent decade than that in the 1980s. 
+* In general, there is an evident trend in that the climate gets warmer in recent decade than that in the 1980s. For 
 
+Is there any observable / interpretable structure? Any outliers?
 * But the summers are always hot in NY. There are some outliers in the graph. There are several different stations in each panel that recorded cooler tempreture than other stations. It is unclear whether this is due to machine error or other reasons.
 
-
+### Mini temp in June and July
 ```{r}
 # The mini temperature graph over the years in NY 
 temin_mean <- 
@@ -388,7 +389,7 @@ temin_mean <-
     mean_temin = mean(tmin, na.rm = T)) %>% 
     filter(is.na(mean_temin) == F)
 
-# Graphing the temp 
+# Graphing the temp min in Jan and July. 
 ggplot(temin_mean, aes(x = year, y = mean_temin )) +
   geom_point(aes(color = id, alpha = 1/100)) +
   labs(
@@ -408,15 +409,16 @@ ggplot(temin_mean, aes(x = year, y = mean_temin )) +
 * The outliers:
 
 * 
-7.  (i) Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
+7.(i)  Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 ```{r}
-ny_noaa %>% 
-  ggplot(aes(x = tmax, y = tmin)) + 
-    geom_line(na.rm = TRUE) +
-    ggtitle(title = "hexagonal heatmap of maximum temperature vs. minimum temperature" ) +
-    theme(text = element_text(size = 18)) + 
-  facet_grid()
-
+tmax_min = 
+  ggplot(ny_noaa, aes(x = tmin, y = tmax)) +
+  geom_bin2d() +
+  labs(title = "Tempreture in NY from 1981 - 2010", 
+       x = "Minimun tempreture(°C)", 
+       y = "Maximum tempreture(°C)") +
+  theme_classic() +
+  theme(legend.position = "bottom")
 
 ```
 
@@ -425,6 +427,15 @@ ny_noaa %>%
 ny_noaa %>% 
   filter(snow > 0 & snow < 100) %>% 
   ggplot(aes(x = year, y = snow, fill = year)) + 
-  geom_boxplot()
+  geom_boxplot() +
+  geom_density(aes(color = year), alpha = 0.05) +
+    labs(title = "Distribution of snowfall between 0 and 100 by year", 
+         x = "Snowfall (mm)", 
+         y = "Distribution",
+         caption = "Data from ny_noaa") +
+    theme_classic() +
+    theme(legend.position = "right",
+          legend.direction = "vertical")
+tmax_min/snowfall
 ```
 
