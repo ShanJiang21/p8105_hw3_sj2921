@@ -413,35 +413,51 @@ ggplot(temin_mean, aes(x = year, y = mean_temin )) +
 * The mini temparature graph shows in Janaury the tempature varies more than that in July. 
 
 * The outliers:
-Also, there are some extreme points which are not falling into the overlapping part of the graph. 
-* 
-7.(i)  Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
+Also, there are some extreme points which are not falling into the overlapping part of the graph. However, there a fewer outliers than the max temperature two-panel graph.
+
+6.(i)  Make a two-panel plot showing tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); 
 ```{r}
-tmax_min = 
+hex_graph <-
   ggplot(ny_noaa, aes(x = tmin, y = tmax)) +
-  geom_bin2d() +
-  labs(title = "Tempreture in NY from 1981 - 2010", 
-       x = "Minimun tempreture(°C)", 
+  geom_hex() +
+  labs(title = "Tempreture in NY from 1981-2010", 
+       x = "Minimum tempreture(°C)", 
        y = "Maximum tempreture(°C)") +
-  theme_classic() +
-  theme(legend.position = "bottom")
+  theme(
+    plot.title = element_text(size = 11, face = "bold"),
+    legend.title = element_text(size = 10), 
+    legend.text = element_text(size = 8)) +
+  scale_y_continuous(breaks = c(-40, -20, 0, 20, 40, 60),
+                     labels = c("-40°C","-20°C"," 0°C", "20°C", "40°C", "60°C")) +
+  scale_x_continuous(breaks = c(-60, -30, 0, 30, 60),
+                     labels = c("-60°C", "30°C", "0°C", "30°C", "60°C")) +
+  theme(legend.position = "right")
 
 ```
+ 
 
-8.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+7.  (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
 ```{r}
-ny_noaa %>% 
+snow_graph <- ny_noaa %>% 
   filter(snow > 0 & snow < 100) %>% 
+  mutate(year = as.character(year)) %>% 
   ggplot(aes(x = year, y = snow, fill = year)) + 
-  geom_boxplot() +
-  geom_density(aes(color = year), alpha = 0.05) +
-    labs(title = "Distribution of snowfall between 0 and 100 by year", 
+  geom_violin(alpha = 0.5 ) +
+  labs(title = "Distribution of snowfall between 0 and 100 by year", 
          x = "Snowfall (mm)", 
          y = "Distribution",
-         caption = "Data from ny_noaa") +
-    theme_classic() +
-    theme(legend.position = "right",
-          legend.direction = "vertical")
-tmax_min/snowfall
-```
+         caption = "Data from ny_noaa set") +
+  scale_x_discrete(breaks = c(1981, 1986, 1991, 1996, 2000, 2005, 2010)) +
+    theme(plot.title = element_text(size = 10, face = "bold"),
+          legend.key.size = unit(0.1, "cm"), 
+          legend.text = element_text(size = 7),
+          legend.direction = "horizontal")
 
+gridExtra::grid.arrange(hex_graph, snow_graph, nrow = 2 )
+```
+* Since making a scatterplot with lots of data, there’s a limit as overplotting using alpha levels and transparency. From the hex graph we can see each hexagon square represents a collection of points. In the lighter area, we can check the concentration of temperature and if there is any correlation between the minimun tem and the maximum temp.
+
+* From the plotwe can see it is a left-skewed one as majority of snow volume concerntrates below the 25mm across years. It means it is not snowing heavily for normal cases in NY. 
+
+* However, there are some specific extreme situations as the graph shows a lump of snowfall which reaches high as 75 mm. On these days, the snow has become a diasater to be ready for. 
