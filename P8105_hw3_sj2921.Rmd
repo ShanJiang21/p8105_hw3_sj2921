@@ -294,6 +294,7 @@ The ny_noaa data set contains 7 variables and 2595176 observation value.
 * prcp: The daily precipitation volume in the unique location(id as key). 
 * snow: The daily snowfall volume in the unique location(id as key)
 * snwd: South to North Water diversion in the specific date.
+
 ```{r results='hide'}
 sum(is.na(ny_noaa$prcp))
 sum(is.na(ny_noaa$snow))
@@ -316,10 +317,15 @@ ny_noaa <-
                  month = as.numeric(format(date, format = "%m")),
                  day = as.numeric(format(date, format = "%d"))) 
 # Convert the month into the month name
-ny_noaa$month <- as.character(month.name[ny_noaa$month])
-  
+ny_noaa$month <- as.character(month.name[ny_noaa$month]) %>% 
+# Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. 
+  mutate(prcp = ifelse(is.na(prcp), NA, prcp / 10),
+         tmax  = ifelse(is.na(tmax), NA, as.numeric(tmax) / 10),
+         tmin  = ifelse(is.na(tmin), NA, as.integer(tmin) / 10)) 
 ```
-5. For snowfall, what are the most commonly observed values? Why?
+* After the formatting, the date variable is organized in year-month-date. * Also, for pricipitation and temperature, the common practice is to convert it into the mm units and ºc which can be interpreted easily. 
+
+4. For snowfall, what are the most commonly observed values? Why?
 ```{r}
 ny_noaa %>% 
   group_by(snow) %>%
