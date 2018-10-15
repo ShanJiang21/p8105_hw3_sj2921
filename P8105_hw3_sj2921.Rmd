@@ -36,7 +36,7 @@ response <-
   levels <- (c("Excellent","Very Good", "Good", "Fair", "Poor")))
 
 ```
-##### Questions
+### Questions
 * 1.In 2002,  CT, FL, NC were observed at 7 locations.
 ```{r}
  brfss_df %>% 
@@ -65,7 +65,7 @@ ggplot(location, aes(x = year, y = n, color = state)) +
     name = "State",
     discrete = T
   ) +
-  theme(plot.title = element_text(size = 9, face = "bold"))
+  theme(plot.title = element_text(size = 10, face = "bold"))
 ```
 
 * The spaghetti plot shows there are no more than 10 observed location during 2002 - 2010 for a lot of states. 
@@ -110,14 +110,18 @@ ggplot(panel, aes(x = year, y = avg_pro, color = state)) + geom_line(alpha = 0.4
     discrete = TRUE,
     option = "inferno"
   ) +
-  theme(axis.text = element_text(size = 4))
+  theme(axis.text = element_text(size = 6))+
+  theme(plot.title = element_text(size = 10, face = "bold"))
 
 ```
 
 #### Comments: 
 (1). The five panel plot shows that overall health condition among states through the years from 2002 to 2010. 
+
 (2). The response of 'good' and 'very good' has a high percentage for all states around the country, implying that the health status for the general public of all states tend to concerntrates on the good or above as fair and poor are at a rather low percentage of the whole dataset. 
-(3). The between group difference among the State-level groups are not significant as the line shown in the graph tends to overlap with each other. 
+
+(3). The between group difference among the State-level groups are not significant as the line shown in the graph tends to overlap with each other.
+
 (4). For the time series data analysis, the trend of health status for state-level groups are stable as there is no evident flutuations over the years for these 5 panels.
 
 # problem 2
